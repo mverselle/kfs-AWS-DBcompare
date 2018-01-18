@@ -93,6 +93,33 @@ SELECT TABLE_NAME,'Table exists in Financial 7 but not in KFS 3' FROM (
             AND TABLE_NAME NOT LIKE '%MLOG$%'
 ) ORDER BY TABLE_NAME;
 
+--Table exists in Financials 7 or Rice 7 but not in KFS 3
+SELECT TABLE_NAME, 'Tables in Rice/Financials 7 but not in 3' FROM (
+    SELECT TABLE_NAME FROM (
+        SELECT TABLE_NAME FROM DBA_TABLES@KFS7GOLD
+            WHERE OWNER = 'RICE'
+                AND TABLE_NAME NOT LIKE 'RUPD$%'
+                AND TABLE_NAME NOT LIKE '%MLOG$%'
+        MINUS
+        SELECT TABLE_NAME FROM DBA_TABLES
+            WHERE OWNER = 'KULOWNER'
+                AND TABLE_NAME NOT LIKE 'RUPD$%'
+                AND TABLE_NAME NOT LIKE '%MLOG$%'
+    )
+    UNION ALL
+    SELECT TABLE_NAME FROM (
+        SELECT TABLE_NAME FROM DBA_TABLES@KFS7GOLD
+            WHERE OWNER = 'KULOWNER'
+                AND TABLE_NAME NOT LIKE 'RUPD$%'
+                AND TABLE_NAME NOT LIKE '%MLOG$%'
+        MINUS
+        SELECT TABLE_NAME FROM DBA_TABLES
+            WHERE OWNER = 'KULOWNER'
+                AND TABLE_NAME NOT LIKE 'RUPD$%'
+                AND TABLE_NAME NOT LIKE '%MLOG$%'
+    )
+) ORDER BY TABLE_NAME;
+
 --==================================================
 --             Table/Field Comparisons
 --==================================================
